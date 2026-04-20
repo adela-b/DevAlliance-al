@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product — AZURA</title>
+  <meta name="description" content="AZURA product details." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div id="site-header"></div>
+  <main class="container-xl">
+
+<div id="productRoot"></div>
+  </main>
+  <div id="site-footer"></div>
+  <div id="site-mobile-nav"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+mountShell('shop');
+const id = new URLSearchParams(location.search).get('id');
+const p = getProduct(id);
+const root = document.getElement
+/* ===== Chips / Badges ===== */ById('productRoot');
+if (!p) {
+  root.innerHTML = `<div class="empty-state"><h2>Product not found</h2><p>It may have moved or been removed.</p><a href="shop.html" class="btn-primary-az mt-3">Back to shop</a></div>`;
+} else {
+  document.title = p.name + ' — AZURA';
+  const inWish = Store.inWishlist(p.id);
+  root.innerHTML = `
+  <nav class="small text-muted mt-4"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <a href="shop.html?cat=${encodeURIComponent(p.category)}">${p.category}</a> / <span class="text-dark">${p.name}</span></nav>
+  <div class="row g-4 mt-2">
+    <div class="col-lg-6">
+      <div class="gallery-main"><img src="${p.image}" alt="${p.name}" id="mainImg" /></div>
+      <div class="gallery-thumbs">
+        ${[0,1,2].map(i=>`<button class="${i===0?'active':''}" data-thumb><img src="${p.image}" alt=""></button>`).join('')}
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="product-brand small text-uppercase text-muted mb-2">${p.brand}</div>
+      <h1 class="mb-2">${p.name}</h1>
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <span class="text-warning"><i class="bi bi-star-fill"></i></span>
+        <span>${p.rating}</span><span class="text-muted">(${p.reviews} reviews)</span>
+        ${p.badge?badgeHtml(p.badge):''}
+      </div>
+      <div class="d-flex align-items-baseline gap-3 mb-3">
+        <span style="font-size:2rem; font-weight:800;">$${p.price.toFixed(2)}</span>
+        ${p.oldPrice?`<span class="text-muted text-decoration-line-through">$${p.oldPrice.toFixed(2)}</span>`:''}
+        ${p.oldPrice?`<span class="badge-sale">Save $${(p.oldPrice-p.price).toFixed(0)}</span>`:''}
+      </div>
+      <p class="text-muted">${p.description}</p>
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn-primary-az flex-grow-1" onclick="Store.addToCart('${p.id}')"><i class="bi bi-bag-plus"></i> Add to cart</button>
+        <button class="btn-outline-az" onclick="Store.addToCart('${p.id}'); window.location='checkout.html'">Buy now</button>
+        <button class="btn-outline-az ${inWish?'active':''}" id="wishToggle" onclick="Store.toggleWish('${p.id}'); document.getElementById('wishToggle').querySelector('i').className=Store.inWishlist('${p.id}')?'bi bi-heart-fill':'bi bi-heart';"><i class="bi ${inWish?'bi-heart-fill':'bi-heart'}"></i></button>
+      </div>
+      <div class="mt-4 small text-muted d-flex flex-wrap gap-3">
+        <span><i class="bi bi-truck text-primary"></i> Free shipping</span>
+        <span><i class="bi bi-shield-check text-primary"></i> 2-yr warranty</span>
+        <span><i class="bi bi-arrow-counterclockwise text-primary"></i> 30-day returns</span>
+      </div>
+    </div>
+  </div>
+  <div class="row g-4 mt-4">
+    <div class="col-lg-7">
+      <h3>Specifications</h3>
+      <table class="spec-table">${p.specs.map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('')}</table>
+    </div>
+    <div class="col-lg-5">
+      <h3>Reviews</h3>
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div style="font-size:2.5rem; font-weight:800;">${p.rating}</div>
+        <div>
+          <div class="text-warning">${'★'.repeat(Math.round(p.rating))}${'☆'.repeat(5-Math.round(p.rating))}</div>
+          <div class="small text-muted">${p.reviews} verified reviews</div>
+        </div>
+      </div>
+      <div class="filter-card">
+        <div class="d-flex justify-content-between"><strong>Sarah K.</strong><span class="text-warning">★★★★★</span></div>
+        <p class="small text-muted mt-2 mb-0">"Exactly as described. Fast shipping and beautiful packaging."</p>
+      </div>
+      <div class="filter-card mt-3">
+        <div class="d-flex justify-content-between"><strong>Marco V.</strong><span class="text-warning">★★★★☆</span></div>
+        <p class="small text-muted mt-2 mb-0">"Great value for the price, would recommend to a friend."</p>
+      </div>
+    </div>
+  </div>
+  <div class="section-head"><div><h2>You may also like</h2></div></div>
+  <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" id="related"></div>
+  `;
+  const rel = PRODUCTS.filter(x=>x.category===p.category && x.id!==p.id).slice(0,4);
+  document.getElementById('related').innerHTML = rel.map(productCardHtml).join('');
+}
+</script>
+</body>
+</html>

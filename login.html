@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign in — AZURA</title>
+    <meta name="description" content="Sign in or create an AZURA account." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="site-header"></div>
+    <main class="container-xl">
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login">Sign in</button>
+          <button class="auth-tab" data-tab="register">Create account</button>
+        </div>
+
+        <div data-pane="login">
+          <h1>Welcome back</h1>
+          <p class="sub">Sign in to your AZURA account.</p>
+          <form id="loginForm">
+            <div class="mb-3">
+              <input
+                type="email"
+                class="input-az"
+                placeholder="Email or username"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <input
+                type="password"
+                class="input-az"
+                placeholder="Password"
+                required
+              />
+            </div>
+            <div
+              class="d-flex justify-content-between align-items-center mb-3 small"
+            >
+              <label class="form-check"
+                ><input class="form-check-input me-1" type="checkbox" />
+                Remember me</label
+              >
+              <a href="#" class="text-primary">Forgot password?</a>
+            </div>
+            <button class="btn-primary-az w-100">Sign in</button>
+          </form>
+          <div class="divider-or">or continue with</div>
+          <button class="social-btn">
+            <i class="bi bi-google"></i> Continue with Google
+          </button>
+          <button class="social-btn">
+            <i class="bi bi-apple"></i> Continue with Apple
+          </button>
+        </div>
+
+        <div data-pane="register" style="display: none">
+          <h1>Create account</h1>
+          <p class="sub">Join AZURA in seconds.</p>
+          <form id="regForm">
+            <div class="mb-3">
+              <input
+                id="regName"
+                class="input-az"
+                placeholder="Full name"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <input
+                id="regEmail"
+                type="email"
+                class="input-az"
+                placeholder="Email"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <input
+                id="regPass"
+                type="password"
+                class="input-az"
+                placeholder="Password"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <input
+                type="password"
+                class="input-az"
+                placeholder="Confirm password"
+                required
+              />
+            </div>
+            <button class="btn-primary-az w-100">Create account</button>
+          </form>
+        </div>
+      </div>
+    </main>
+    <div id="site-footer"></div>
+    <div id="site-mobile-nav"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      mountShell("login");
+      document.querySelectorAll(".auth-tab").forEach((b) => {
+        b.addEventListener("click", () => {
+          document
+            .querySelectorAll(".auth-tab")
+            .forEach((x) => x.classList.remove("active"));
+          b.classList.add("active");
+          document
+            .querySelectorAll("[data-pane]")
+            .forEach(
+              (p) =>
+                (p.style.display =
+                  p.dataset.pane === b.dataset.tab ? "block" : "none"),
+            );
+        });
+      });
+      document.getElementById("loginForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = e.target.querySelector("input[type=email]").value;
+        Store.setUser({ name: email.split("@")[0], email });
+        toast("Signed in!");
+        setTimeout(() => (location.href = "index.html"), 600);
+      });
+      document.getElementById("regForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        Store.setUser({
+          name: document.getElementById("regName").value,
+          email: document.getElementById("regEmail").value,
+        });
+        toast("Account created!");
+        setTimeout(() => (location.href = "index.html"), 600);
+      });
+    </script>
+  </body>
+</html>
